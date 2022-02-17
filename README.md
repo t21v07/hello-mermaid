@@ -15,7 +15,7 @@ loop Carfting pizza
 end
 PizzaRestaurant->>Me: Here you are, the special one
 Me->>PizzaRestaurant: Yummy!
-PizzaRestaurant->-Me: Thanks, enjoy your pizza!
+PizzaRestaurant->>Me: Thanks, enjoy your pizza!
 ```
 
 ## Flowchart
