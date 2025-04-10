@@ -1,6 +1,4 @@
 ```mermage
-
-
 flowchart TD
     subgraph Client_Layer["ผู้ใช้งาน (Client Layer)"]
         A[Web Browser]
@@ -38,6 +36,4 @@ flowchart TD
     D -->|Send Task| F
     F -->|Trigger| G
     G -->|Process| E
-
-
 ```
