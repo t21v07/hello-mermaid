@@ -1,39 +1,36 @@
 ```mermage
 flowchart TD
-    subgraph Client_Layer["ผู้ใช้งาน (Client Layer)"]
-        A[Web Browser]
-        B[Mobile App]
+    subgraph Client_Layer[Client Layer]
+        client[ผู้ใช้งาน (Client)<br/>เช่น หน้าเว็บหรือ Mobile Application]
     end
 
-    subgraph Edge_Layer["ชั้นนอกสุด / ทางเข้า (Edge/Gateway Layer)"]
-        C[Managed Cloud API Gateway\n- Routing\n- Security\n- AWS/GCP Managed]
+    subgraph Edge_Layer[Edge/Gateway Layer]
+        gateway[Managed Cloud API Gateway<br/>เช่น AWS API Gateway, Google Cloud Gateway<br/>จัดการ Routing, Security<br/>ประหยัด Managed Service]
     end
 
-    subgraph App_Layer["ชั้นประมวลผลหลัก (Application Layer)"]
-        D[Serverless Function\n(Logic หลัก)\n- AWS Lambda\n- GCP Cloud Functions]
+    subgraph App_Layer[Application Layer]
+        function[Serverless Function (หลัก)<br/>เช่น AWS Lambda, Google Cloud Functions<br/>Logic หลัก, จ่ายตามการทำงาน]
     end
 
-    subgraph Data_Layer["ชั้นข้อมูล (Data Layer)"]
-        E[Managed Database\n- Aurora Serverless\n- Small RDS/Cloud SQL]
+    subgraph Data_Layer[Data Layer]
+        db[Managed Serverless/Small DB<br/>เช่น Aurora Serverless, Cloud SQL<br/>ปรับขนาดได้เมื่อไม่มีโหลด]
     end
 
-    subgraph Async_Layer["ชั้นประมวลผลเบื้องหลัง (Optional)"]
-        F[Managed Queue\n- AWS SQS]
-        G[Async Worker Function\n- AWS Lambda]
+    subgraph Async_Layer[Async Processing Layer (ถ้าจำเป็น)]
+        queue[Managed Cloud Queue<br/>เช่น AWS SQS, รับ Task]
+        async_function[Serverless Function (Async Worker)<br/>Trigger โดย Queue]
     end
 
+    client -->|"ส่ง Request"| gateway
+    gateway -->|"Route Request"| function
+    
     %% Normal Flow
-    A -->|Request| C
-    B -->|Request| C
-    C -->|Route| D
-    D -->|Read/Write| E
-    E -->|Data| D
-    D -->|Response| C
-    C -->|Response| A
-    C -->|Response| B
+    function -->|"อ่าน/เขียนข้อมูล"| db
+    function -->|"ส่ง Response"| gateway
+    gateway -->|"ส่ง Response กลับให้ผู้ใช้"| client
 
     %% Async Flow
-    D -->|Send Task| F
-    F -->|Trigger| G
-    G -->|Process| E
+    function -->|"ส่ง Task เข้า Queue"| queue
+    queue -->|"Trigger"| async_function
+    async_function -->|"ประมวลผล Task<br/>อ่าน/เขียนข้อมูล"| db
 ```
